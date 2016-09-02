@@ -10,6 +10,22 @@ Make a config class containing public static variables.
 Annotate them with the @ConfigurationOption.  
 Call the build function to override them with the associated property file.
 
+## Add as dependency
+To get the ConfigurationBuilder use the snippets below and replace VERSION with the latest version.
+```xml
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+```
+```xml
+    <dependency>
+        <groupId>com.github.MaikWezinkhof</groupId>
+        <artifactId>ConfigurationBuilder</artifactId>
+        <version>VERSION</version>
+    </dependency>
+```
+
 ## Example
 
 Make the config class containing variables with
