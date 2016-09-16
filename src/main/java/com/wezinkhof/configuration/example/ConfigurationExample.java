@@ -22,11 +22,11 @@ public class ConfigurationExample {
 	@ConfigurationOption
 	public static String TYPE_OF_WEATHER = "sunny";
 
-	public static void main(String... args) throws Exception {
+	public static void test() throws Exception {
 		System.out.println("a configuration example");
 		new ConfigurationBuilder(ConfigurationExample.class, new File("application.cfg")).build();
-		System.out.println("ConfigurationExample.I_AM_ENABLED = "+ConfigurationExample.I_AM_ENABLED);
-		System.out.println("ConfigurationExample.WELCOME_TEXT = "+ConfigurationExample.WELCOME_TEXT);
-		System.out.println("ConfigurationExample.MAX_AMOUNT   = "+ConfigurationExample.MAX_AMOUNT);
+		System.out.println("ConfigurationExample.I_AM_ENABLED = " + ConfigurationExample.I_AM_ENABLED);
+		System.out.println("ConfigurationExample.WELCOME_TEXT = " + ConfigurationExample.WELCOME_TEXT);
+		System.out.println("ConfigurationExample.MAX_AMOUNT   = " + ConfigurationExample.MAX_AMOUNT);
 	}
 }
