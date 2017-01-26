@@ -67,7 +67,7 @@ public class ConfigurationBuilder {
                 if (configurationParsers.containsKey(defaultValue.getClass())) {
                     o.setAccessible(true);
                     o.set(null, configurationParsers.get(defaultValue.getClass()).parse(String.valueOf(value)));
-                    properties.setProperty(variableName, String.valueOf(o.get(null)));
+                    properties.setProperty(variableName, configurationParsers.get(defaultValue.getClass()).toStringValue(o.get(null)));
                 } else {
                     throw new Exception("Unknown Configuration Type");
                 }
