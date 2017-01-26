@@ -5,5 +5,5 @@ package com.wezinkhof.configuration;
  */
 public interface IConfigurationParser<Type> {
 
-	Type parse(String value);
+    Type parse(String value);
 }
