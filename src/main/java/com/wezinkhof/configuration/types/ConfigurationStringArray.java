@@ -25,7 +25,8 @@ public class ConfigurationStringArray implements IConfigurationParser<String[]> 
             for (int i = 1; i < strings.length; i++) {
                 out.append(SEPERATOR).append(strings[i]);
             }
+            return out.toString();
         }
-        return out.toString();
+        return "";
     }
 }
