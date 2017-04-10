@@ -1,4 +1,4 @@
-package com.wezinkhof.configuration;
+package com.kaaz.configuration;
 
 
 import java.util.Comparator;

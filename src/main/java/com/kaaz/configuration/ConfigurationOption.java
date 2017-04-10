@@ -1,4 +1,4 @@
-package com.wezinkhof.configuration;
+package com.kaaz.configuration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

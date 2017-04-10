@@ -1,4 +1,4 @@
-package com.wezinkhof.configuration;
+package com.kaaz.configuration;
 
 /**
  * Created on 30-8-2016

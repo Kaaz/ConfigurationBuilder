@@ -1,6 +1,6 @@
-package com.wezinkhof.configuration.types;
+package com.kaaz.configuration.types;
 
-import com.wezinkhof.configuration.IConfigurationParser;
+import com.kaaz.configuration.IConfigurationParser;
 
 /**
  * splits the propertie on '#' into in array

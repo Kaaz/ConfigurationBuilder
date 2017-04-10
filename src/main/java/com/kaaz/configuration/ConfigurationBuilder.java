@@ -1,4 +1,4 @@
-package com.wezinkhof.configuration;
+package com.kaaz.configuration;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
@@ -32,7 +32,7 @@ public class ConfigurationBuilder {
      * loads the configuration parsers for each type
      */
     private void loadParsers() {
-        Reflections reflections = new Reflections("com.wezinkhof.configuration.types");
+        Reflections reflections = new Reflections("com.kaaz.configuration.types");
         Set<Class<? extends IConfigurationParser>> classes = reflections.getSubTypesOf(IConfigurationParser.class);
         for (Class<? extends IConfigurationParser> parserclass : classes) {
             try {
