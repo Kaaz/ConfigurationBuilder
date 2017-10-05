@@ -51,7 +51,7 @@ public class ConfigurationBuilder {
      * @param cleanfile clear the File of all undefined variables
      * @throws IOException
      */
-    public void build(Boolean cleanfile) throws Exception {
+    public void build(boolean cleanfile) throws Exception {
         if (configFile == null) throw new IllegalStateException("File not initialized");
         Reflections reflections = new Reflections(new org.reflections.util.ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forClass(configclass))
