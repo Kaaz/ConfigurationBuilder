@@ -48,15 +48,19 @@ public class ConfigurationBuilder {
     /**
      * Updates the configClass's variables with the configFile's values
      *
+     * @param cleanfile clear the File of all undefined variables
      * @throws IOException
      */
-    public void build() throws Exception {
+    public void build(Boolean cleanfile) throws Exception {
         if (configFile == null) throw new IllegalStateException("File not initialized");
         Reflections reflections = new Reflections(new org.reflections.util.ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forClass(configclass))
                 .addScanners(new FieldAnnotationsScanner()));
         Set<Field> options = reflections.getFieldsAnnotatedWith(ConfigurationOption.class);
-        if (configFile.exists()) properties.load(new FileInputStream(configFile));
+        if (configFile.exists()) {
+            properties.load(new FileInputStream(configFile));
+        }
+        ConfigurationProperties cleanProperties = new ConfigurationProperties();
 
         options.forEach(o -> {
             ConfigurationOption option = o.getAnnotation(ConfigurationOption.class);
@@ -68,6 +72,7 @@ public class ConfigurationBuilder {
                     o.setAccessible(true);
                     o.set(null, configurationParsers.get(defaultValue.getClass()).parse(String.valueOf(value)));
                     properties.setProperty(variableName, configurationParsers.get(defaultValue.getClass()).toStringValue(o.get(null)));
+                    cleanProperties.setProperty(variableName, properties.getProperty(variableName));
                 } else {
                     throw new Exception("Unknown Configuration Type");
                 }
@@ -77,6 +82,10 @@ public class ConfigurationBuilder {
                 System.out.println(e);
             }
         });
-        properties.store(new FileOutputStream(configFile), null);
+        if (cleanfile) {
+            cleanProperties.store(new FileOutputStream(configFile), null);
+        } else {
+            properties.store(new FileOutputStream(configFile), null);
+        }
     }
 }
