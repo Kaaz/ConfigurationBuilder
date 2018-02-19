@@ -74,7 +74,7 @@ public class ConfigurationBuilder {
                     properties.setProperty(variableName, configurationParsers.get(defaultValue.getClass()).toStringValue(o.get(null)));
                     cleanProperties.setProperty(variableName, properties.getProperty(variableName));
                 } else {
-                    throw new Exception("Unknown Configuration Type");
+                    throw new Exception("Unknown Configuration Type. Variable name: '"+o.getName()+"'; Unknown Class: " + defaultValue.getClass().getName());
                 }
             } catch (IllegalAccessException e) {
                 System.out.println("Could not load configuration, IllegalAccessException");
