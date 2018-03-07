@@ -65,16 +65,22 @@ public class ConfigurationBuilder {
         options.forEach(o -> {
             ConfigurationOption option = o.getAnnotation(ConfigurationOption.class);
             try {
+                boolean isPrivate = !o.isAccessible();
+                if(isPrivate) {
+                    o.setAccessible(true);
+                }
                 String variableName = o.getName().toLowerCase();
                 Object defaultValue = o.get(null);
                 Object value = configFile.exists() ? properties.getOrDefault(variableName, defaultValue) : defaultValue;
-                if (configurationParsers.containsKey(defaultValue.getClass())) {
-                    o.setAccessible(true);
-                    o.set(null, configurationParsers.get(defaultValue.getClass()).parse(String.valueOf(value)));
-                    properties.setProperty(variableName, configurationParsers.get(defaultValue.getClass()).toStringValue(o.get(null)));
+                if (configurationParsers.containsKey(o.getType())) {
+                    o.set(null, configurationParsers.get(o.getType()).parse(String.valueOf(value)));
+                    properties.setProperty(variableName, configurationParsers.get(o.getType()).toStringValue(o.get(null)));
                     cleanProperties.setProperty(variableName, properties.getProperty(variableName));
                 } else {
-                    throw new Exception("Unknown Configuration Type. Variable name: '"+o.getName()+"'; Unknown Class: " + defaultValue.getClass().getName());
+                    throw new Exception("Unknown Configuration Type. Variable name: '"+o.getName()+"'; Unknown Class: " + o.getType().getName());
+                }
+                if(isPrivate) {
+                    o.setAccessible(false);
                 }
             } catch (IllegalAccessException e) {
                 System.out.println("Could not load configuration, IllegalAccessException");
