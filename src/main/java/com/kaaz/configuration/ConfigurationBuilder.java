@@ -1,8 +1,6 @@
 package com.kaaz.configuration;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.FieldAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
+import com.kaaz.configuration.types.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,9 +9,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class ConfigurationBuilder {
     private final File configFile;
@@ -32,8 +30,13 @@ public class ConfigurationBuilder {
      * loads the configuration parsers for each type
      */
     private void loadParsers() {
-        Reflections reflections = new Reflections("com.kaaz.configuration.types");
-        Set<Class<? extends IConfigurationParser>> classes = reflections.getSubTypesOf(IConfigurationParser.class);
+        ArrayList<Class<? extends IConfigurationParser<?>>> classes = new ArrayList<>();
+        classes.add(ConfigurationBoolean.class);
+        classes.add(ConfigurationFloat.class);
+        classes.add(ConfigurationInteger.class);
+        classes.add(ConfigurationLong.class);
+        classes.add(ConfigurationString.class);
+        classes.add(ConfigurationStringArray.class);
         for (Class<? extends IConfigurationParser> parserclass : classes) {
             try {
                 Class<?> parserType = (Class<?>) ((ParameterizedType) parserclass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
@@ -53,41 +56,39 @@ public class ConfigurationBuilder {
      */
     public void build(boolean cleanfile) throws Exception {
         if (configFile == null) throw new IllegalStateException("File not initialized");
-        Reflections reflections = new Reflections(new org.reflections.util.ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forClass(configclass))
-                .addScanners(new FieldAnnotationsScanner()));
-        Set<Field> options = reflections.getFieldsAnnotatedWith(ConfigurationOption.class);
         if (configFile.exists()) {
             properties.load(new FileInputStream(configFile));
         }
         ConfigurationProperties cleanProperties = new ConfigurationProperties();
 
-        options.forEach(o -> {
-            ConfigurationOption option = o.getAnnotation(ConfigurationOption.class);
+        for (Field field : configclass.getDeclaredFields()) {
+            if (!field.isAnnotationPresent(ConfigurationOption.class)) {
+                continue;
+            }
             try {
-                boolean isPrivate = !o.isAccessible();
+                boolean isPrivate = !field.isAccessible();
                 if (isPrivate) {
-                    o.setAccessible(true);
+                    field.setAccessible(true);
                 }
-                String variableName = o.getName().toLowerCase();
-                Object defaultValue = o.get(null);
+                String variableName = field.getName().toLowerCase();
+                Object defaultValue = field.get(null);
                 Object value = configFile.exists() ? properties.getOrDefault(variableName, defaultValue) : defaultValue;
-                if (configurationParsers.containsKey(o.getType())) {
-                    o.set(null, configurationParsers.get(o.getType()).parse(String.valueOf(value)));
-                    properties.setProperty(variableName, configurationParsers.get(o.getType()).toStringValue(o.get(null)));
+                if (configurationParsers.containsKey(field.getType())) {
+                    field.set(null, configurationParsers.get(field.getType()).parse(String.valueOf(value)));
+                    properties.setProperty(variableName, configurationParsers.get(field.getType()).toStringValue(field.get(null)));
                     cleanProperties.setProperty(variableName, properties.getProperty(variableName));
                 } else {
-                    throw new Exception("Unknown Configuration Type. Variable name: '" + o.getName() + "'; Unknown Class: " + o.getType().getName());
+                    throw new Exception("Unknown Configuration Type. Variable name: '" + field.getName() + "'; Unknown Class: " + field.getType().getName());
                 }
                 if (isPrivate) {
-                    o.setAccessible(false);
+                    field.setAccessible(false);
                 }
             } catch (IllegalAccessException e) {
                 System.out.println("Could not load configuration, IllegalAccessException");
             } catch (Exception e) {
                 System.out.println(e);
             }
-        });
+        }
         if (cleanfile) {
             cleanProperties.store(new FileOutputStream(configFile), null);
         } else {
