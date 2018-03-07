@@ -49,7 +49,7 @@ public class ConfigurationBuilder {
      * Updates the configClass's variables with the configFile's values
      *
      * @param cleanfile clear the File of all undefined variables
-     * @throws IOException
+     * @throws IOException file can't be accessed
      */
     public void build(boolean cleanfile) throws Exception {
         if (configFile == null) throw new IllegalStateException("File not initialized");
@@ -66,7 +66,7 @@ public class ConfigurationBuilder {
             ConfigurationOption option = o.getAnnotation(ConfigurationOption.class);
             try {
                 boolean isPrivate = !o.isAccessible();
-                if(isPrivate) {
+                if (isPrivate) {
                     o.setAccessible(true);
                 }
                 String variableName = o.getName().toLowerCase();
@@ -77,9 +77,9 @@ public class ConfigurationBuilder {
                     properties.setProperty(variableName, configurationParsers.get(o.getType()).toStringValue(o.get(null)));
                     cleanProperties.setProperty(variableName, properties.getProperty(variableName));
                 } else {
-                    throw new Exception("Unknown Configuration Type. Variable name: '"+o.getName()+"'; Unknown Class: " + o.getType().getName());
+                    throw new Exception("Unknown Configuration Type. Variable name: '" + o.getName() + "'; Unknown Class: " + o.getType().getName());
                 }
-                if(isPrivate) {
+                if (isPrivate) {
                     o.setAccessible(false);
                 }
             } catch (IllegalAccessException e) {
