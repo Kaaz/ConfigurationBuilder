@@ -37,6 +37,12 @@ public class ConfigurationBuilder {
         classes.add(ConfigurationLong.class);
         classes.add(ConfigurationString.class);
         classes.add(ConfigurationStringArray.class);
+        classes.add(ConfigurationDouble.class);
+        configurationParsers.put(int.class, new ConfigurationInteger());
+        configurationParsers.put(boolean.class, new ConfigurationBoolean());
+        configurationParsers.put(double.class, new ConfigurationDouble());
+        configurationParsers.put(long.class, new ConfigurationLong());
+        configurationParsers.put(float.class, new ConfigurationFloat());
         for (Class<? extends IConfigurationParser> parserclass : classes) {
             try {
                 Class<?> parserType = (Class<?>) ((ParameterizedType) parserclass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
