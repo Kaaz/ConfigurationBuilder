@@ -6,9 +6,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
-/**
- * Created on 30-8-2016
- */
 public class ConfigurationProperties extends Properties {
     private static final long serialVersionUID = 1L;
 
